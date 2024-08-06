@@ -94,7 +94,7 @@
       companyId: new URLSearchParams(window.location.search).get('companyId'),
     };
 
-    await fetch('https://your-vchat-api.com/api/track', {
+    await fetch('http://localhost:3001/api/track', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
