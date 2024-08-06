@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Widget</title>
+  <style>
+    #chat-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background-color: white;
+      max-width: 300px;
+    }
+    #chat-widget-messages {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    #chat-widget-input {
+      width: 80%;
+    }
+    #chat-widget-button {
+      width: 20%;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-widget">
+    <div id="chat-widget-messages"></div>
+    <input type="text" id="chat-widget-input" placeholder="Type a message..." />
+    <button id="chat-widget-button">Send</button>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const companyId = new URLSearchParams(window.location.search).get('companyId');
+      const messagesContainer = document.getElementById('chat-widget-messages');
+      const inputField = document.getElementById('chat-widget-input');
+      const sendButton = document.getElementById('chat-widget-button');
+
+      sendButton.addEventListener('click', sendMessage);
+      inputField.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') sendMessage();
+      });
+
+      async function sendMessage() {
+        const message = inputField.value.trim();
+        if (message) {
+          appendMessage(message, 'user');
+          inputField.value = '';
+          // Send the message to your server here
+        }
+      }
+
+      function appendMessage(message, sender) {
+        const messageElement = document.createElement('div');
+        messageElement.textContent = message;
+        messageElement.style.textAlign = sender === 'user' ? 'right' : 'left';
+        messagesContainer.appendChild(messageElement);
+      }
+
+      async function trackUserData() {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        const ip = data.ip;
+
+        const payload = {
+          ip,
+          visitedPage: window.location.href,
+          userAgent: navigator.userAgent,
+          companyId,
+        };
+
+        await fetch('https:/api/track', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      trackUserData();
+    });
+  </script>
+</body>
+</html>
