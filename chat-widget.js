@@ -71,10 +71,14 @@
 
   // Function to append a message
   function appendMessage(message, sender) {
-    const messageElement = document.createElement('div');
-    messageElement.textContent = message;
-    messageElement.style.textAlign = sender === 'user' ? 'right' : 'left';
-    messagesContainer.appendChild(messageElement);
+    if (messagesContainer) { // Check if messagesContainer is not null
+      const messageElement = document.createElement('div');
+      messageElement.textContent = message;
+      messageElement.style.textAlign = sender === 'user' ? 'right' : 'left';
+      messagesContainer.appendChild(messageElement);
+    } else {
+      console.error('Messages container is not available');
+    }
   }
 
   // Track user data
